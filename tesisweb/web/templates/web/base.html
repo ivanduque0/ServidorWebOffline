@@ -1,0 +1,32 @@
+<html>
+<head>
+    {% block head %}
+
+    {% endblock %}
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="{% url 'index' %}">Página principal</a></li>
+                <li><a href="{% url 'agregarcontrato' %}">Agregar contrato</a></li>
+                <li><a href="{% url 'seleccionarcontrato' %}">Editar contratos</a></li>
+                <li><a href="{% url 'interacciones' %}">Actividad en contratos</a></li>
+            </ul>
+        </nav>
+    </header>
+    <article>
+        <section>
+            {% block section %}
+
+            {% endblock %}
+        </section>
+    </article>
+    <aside>
+
+    </aside>
+    <footer>
+        
+    </footer>
+</body>
+</html>

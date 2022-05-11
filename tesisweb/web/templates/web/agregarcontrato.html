@@ -1,0 +1,39 @@
+{% extends 'web/base.html' %}
+
+{% block head %}
+    <title>Agregar contrato</title>
+    <style>
+        table, th, td {
+          border: 1px solid black;
+        }
+    </style>
+{% endblock %}
+
+{% block section %}
+
+<form method="post">
+    {% csrf_token %}
+
+    {{formcontrato}}
+    
+    <input type="submit" value="Agregar contrato">
+
+</form>
+
+<h1>Contratos activos</h1>
+
+<table>
+    <tr>
+        <th>Contrato</th>
+    </tr>
+    
+    {% for contrato in contratos %}
+
+        <tr>
+        <td>{{ contrato.nombre }}</td>
+        <td><button><a href="{% url 'eliminarcontrato' contrato.nombre  %}">eliminar</a></button></td>
+        </tr>
+        
+    {% endfor %}
+</table>
+{% endblock %}

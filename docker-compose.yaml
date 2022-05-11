@@ -1,0 +1,173 @@
+version: '3.3'
+
+services:
+
+   postgresweblocal:
+      image: postgres:14-alpine
+      #image: 02da44b1d4a6
+      
+      #restart: always
+
+      ports:
+         - 43:5432
+      volumes:
+         - ~/Desktop/appdocker/postgresdata:/var/lib/postgresql/data
+      env_file:
+         - .env.postgres
+
+   web:
+      user: "${UID}:${GID}"
+      image: webdjango:V0.2
+      #build: ./tesisweb
+      #image: webdjango:v0.8
+      #command: python manage.py runserver 0.0.0.0:8000
+      command: gunicorn tesisweb.wsgi:application --bind 0.0.0.0:8000
+      volumes:
+         #- ~/Desktop/codigostesis/appdocker/tesisweb:/usr/src/app
+         - ./tesisweb/web:/home/app/web/web
+         - ./tesisweb/tesisweb:/home/app/web/tesisweb
+         - ~/Desktop/appdocker/static_volume:/home/app/web/static
+         - ~/Desktop/appdocker/media_volume:/home/app/web/media
+      #ports:
+         #- 8282:8000
+      expose:
+         - 8000
+      env_file:
+         - .env.web
+      depends_on:
+         - postgresweblocal
+         
+   nginx:
+      image: webnginx:V0.1
+      volumes:
+         - ~/Desktop/appdocker/static_volume:/home/app/web/static
+         - ~/Desktop/appdocker/media_volume:/home/app/web/media
+      ports:
+         - 1010:80
+      depends_on:
+         - web
+   
+   postgres:
+   
+      image: postgres:14-alpine
+      
+      #restart: always
+
+      ports:
+         - 44:5432
+         
+      volumes:
+         - ~/Desktop/appdocker/Baselocal/postgresdata:/var/lib/postgresql/data
+         
+      env_file:
+         - .env.postgres
+   
+   dbmaker:
+   
+      image: ivanduque0/dbmakermanager:V0.2
+      
+      volumes:
+         - ~/Desktop/appdocker/Baselocal/dbmaker:/app
+         
+      command: python3 codigo.py
+         
+      env_file:
+         - .env.maker
+         
+      depends_on:
+         - postgres
+
+   dbmanagerfotos:
+   
+      image: ivanduque0/dbmakermanager:V0.2
+      
+      #restart: always
+      
+      command: python3 codigo.py
+      
+      volumes:
+         - ~/Desktop/appdocker/Baselocal/dbmanagerfotos:/app
+         - ~/Desktop/appdocker/media_volume/personas:/app/media/personas
+      env_file:
+         - .env.manager
+         
+      depends_on:
+         - postgres
+         
+   dbmanagerusuarios:
+   
+      image: ivanduque0/dbmakermanager:V0.2
+      
+      #restart: always
+      
+      command: python3 codigo.py
+      
+      volumes:
+         - ~/Desktop/appdocker/Baselocal/dbmanagerusuarios:/app
+         
+      env_file:
+         - .env.manager
+      
+      depends_on:
+         - postgres
+         
+   dbmanagerhorarios:
+   
+      image: ivanduque0/dbmakermanager:V0.2
+      
+      #restart: always
+      
+      command: python3 codigo.py
+      
+      volumes:
+         - ~/Desktop/appdocker/Baselocal/dbmanagerhorarios:/app
+         
+      env_file:
+         - .env.manager
+      
+      depends_on:
+         - postgres
+         
+   dbmanagerinteracciones:
+   
+      image: ivanduque0/dbmakermanager:V0.2
+      
+      #restart: always
+      
+      command: python3 codigo.py
+      
+      volumes:
+         - ~/Desktop/appdocker/Baselocal/dbmanagerinteracciones:/app
+         
+      env_file:
+         - .env.manager
+      
+      depends_on:
+         - postgres
+         
+   facerecognition:
+
+      image: ivanduque0/dockermpfrpsy:v1
+      
+      environment:
+         - DISPLAY=unix$DISPLAY
+      
+      #restart: always
+      
+      env_file:
+         - .env.recognition
+      
+      volumes:
+         - ~/Desktop/appdocker/Baselocal/facerecognition:/app
+         - ~/Desktop/appdocker/media_volume/personas:/app/personas
+         - /tmp/.X11-unix:/tmp/.X11-unix
+         - /tmp/.docker.xauth:/tmp/.docker.xauth
+         
+      privileged: true
+      
+      depends_on:
+         - postgres
+   
+   
+      
+   

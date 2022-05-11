@@ -1,0 +1,43 @@
+{% extends 'web/base.html' %}
+
+{% block head %}
+    <title>Agregar clientes</title>
+    <style>
+        table, th, td {
+          border: 1px solid black;
+        }
+    </style>
+{% endblock %}
+
+{% block section %}
+
+<form method="post">
+    {% csrf_token %}
+    {{select}}
+
+    <input type="submit" value="Seleccionar">
+</form>
+
+{% if contrato != None%}
+    <h1>Usuarios registrados ({{cantidad}})</h1>
+    
+    <button><a href="{% url 'editarcontrato' contrato %}">editar contrato</a></button></td>
+    <table>
+        <tr>
+            <th>cedula</th>
+            <th>nombre</th>
+        </tr>
+        
+        {% for usuario in usuarios %}
+
+            <tr>
+            <td>{{ usuario.cedula}}</td>
+            <td>{{ usuario.nombre }}</td>
+            </tr>
+            
+        {% endfor %}
+
+
+    </table>
+{% endif %}
+{% endblock %}

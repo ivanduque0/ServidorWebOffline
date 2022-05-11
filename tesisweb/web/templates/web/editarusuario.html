@@ -1,0 +1,66 @@
+{% extends 'web/base.html' %}
+
+{% block head %}
+    <title>Editar usuario</title>
+    <style>
+        table, th, td {
+          border: 1px solid black;
+        }
+    </style>
+{% endblock %}
+
+{% block section %}
+
+<h3>Estas editando al usuario {{usuario.nombre}} del contrato {{usuario.contrato}}</h3>
+
+<form method="post">
+  {% csrf_token %}
+  <label>Dia: {{formclientehorarios.dia}}</label>
+  <label>entrada: {{formclientehorarios.entrada}}</label>
+  <label>salida: {{formclientehorarios.salida}}</label>
+  <div hidden>{{formclientehorarios.cedula}}</div>
+  <button>Agregar</button>
+</form>
+
+{% if not foto %}
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <label>{{formfoto.foto}}</label>
+  <div hidden>{{formfoto.cedula}}</div>
+  
+  <button>Agregar foto</button>
+</form>
+
+{% endif %}
+
+{% if foto %}
+<h3>Imagen registrada de {{usuario.nombre}}</h3>
+<img src="{{ foto.foto.url }}" />
+<td><button><a href="{% url 'eliminarfoto' usuario.cedula %}">eliminar foto</a></button></td>
+
+{% endif %}
+
+<h3>Dias y horarios en los que {{usuario.nombre}} tiene permitido entrar y salir de {{usuario.contrato}}</h3>
+
+<table>
+  <tr>
+      <th>Dia</th>
+      <th>Entrada</th>
+      <th>Salida</th>
+  </tr>
+  
+  {% for dato in datos %}
+
+    <tr>
+    <td>{{dato.dia}}</td>
+    <td>{{dato.entrada}}</td>
+    <td>{{dato.salida}}</td>
+    <td><button><a href="{% url 'eliminarhorario' dato.id %}">eliminar</a></button></td>
+    </tr>
+      
+  {% endfor %}
+
+
+</table>
+{% endblock %}

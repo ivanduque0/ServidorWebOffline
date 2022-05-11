@@ -1,0 +1,97 @@
+{% extends 'web/base.html' %}
+
+{% block head %}
+    <title>Ver actividad</title>
+    <style>
+        table, th, td {
+          border: 1px solid black;
+        }
+    </style>
+{% endblock %}
+
+{% block section %}
+<form method="post">
+    {% csrf_token %}
+    {{select}}
+    {{filtro}}
+    <input type="submit" value="Filtrar">
+
+</form>
+
+
+{%if cantidadinteracciones == 0 and contratos != None%}
+
+    <h4>No se encontraron coincidencias</h4>
+
+    <form method="post">
+        {% csrf_token %}
+        <div hidden>{{select}}</div>
+        <button>volver a mostrar todas</button>
+
+    </form>
+
+{%endif%}
+
+{% if cedulafiltro != None or fechadesdefiltro != None or fechahastafiltro != None or horadesdefiltro != None or horahastafiltro != None %}
+
+
+    {% if cantidadinteracciones > 0%}
+        <h4>Usuarios encontrados en las coincidencias ({{cantidadusuarios}})</h4>
+
+        <table>
+            <tr>
+                <th>cedula</th>
+                <th>nombre</th>
+            </tr>
+            
+            {%for usuario in usuarios%}
+            <tr>
+            <td>{{usuario.cedula}}</td>
+            <td>{{usuario.nombre}}</td>
+            </tr>
+            {%endfor%}
+        </table>    
+    {%endif%}
+
+{%endif%}
+
+{% if cantidadinteracciones > 0 %}
+    {% if cedulafiltro == None and fechadesdefiltro == None and fechahastafiltro == None and horadesdefiltro == None and horahastafiltro == None %}
+        <h4>Historico de actividad del contrato</h4>
+    {% endif %}
+
+    {% if cedulafiltro != None or fechadesdefiltro != None or fechahastafiltro != None or horadesdefiltro != None or horahastafiltro != None %}
+        <h4>Coincidencias encontradas ({{cantidadinteracciones}})</h4>
+        <form method="post">
+            {% csrf_token %}
+            <div hidden>{{select}}</div>
+            <button>Limpiar campos</button>
+        
+        </form>
+    {%endif%}
+
+    <table>
+        <tr>
+            <th>cedula</th>
+            <th>nombre</th>
+            <th>fecha</th>
+            <th>hora</th>
+            <th>razon</th>
+        </tr>
+        
+        {% for interaccion in interaccioness %}
+
+            <tr>
+            <td>{{ interaccion.cedula_id }}</td>
+            <td>{{ interaccion.nombre }}</td>
+            <td>{{ interaccion.fecha }}</td>
+            <td>{{ interaccion.hora }}</td>
+            <td>{{ interaccion.razon }}</td>
+            </tr>
+            
+        {% endfor %}
+    </table>
+
+{% endif %}
+
+{% endblock %}
